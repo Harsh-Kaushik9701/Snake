@@ -22,6 +22,14 @@ export default function SnakeGame() {
         return snakeBody.some(([x, y]) => x === xc && y === yc);
     };
 
+    const restartGame = () => {
+        setSnakeBody(Initial_Snake);
+        setScore(0);
+        setIsPaused(false);
+        directionRef.current = [1, 0];
+        foodRef.current = generateFood();
+    };
+
     useEffect(() => {
         const intervalId = setInterval(() => {
             if (isPaused) return;
@@ -79,7 +87,12 @@ export default function SnakeGame() {
         <>
             <div className="heading"><h1>Let's play the Snake Game</h1></div>
             <div className="score"><h2>Score: {score}</h2></div>
-            {isPaused && <div className="game-over"><h2>Game Over</h2></div>}
+            {isPaused && (
+                <div className="game-over">
+                    <h2>Game Over</h2>
+                    <button onClick={restartGame}>Restart Game</button>
+                </div>
+            )}
             <div className="container">
                 {GAMEGRID.map((row, yc) => {
                     return row.map((cell, xc) => {

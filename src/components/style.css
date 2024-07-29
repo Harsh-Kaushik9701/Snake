@@ -13,6 +13,13 @@
     left: 30%;
     top:10%;
 }
+.game-over{
+    height: 20rem;
+    position: absolute;
+    left: 30%;
+    top: 72%;
+}
+
 body{
     height: 100vh;
     width: 100vw;
