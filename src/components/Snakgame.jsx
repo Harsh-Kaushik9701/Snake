@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+
 
 const Game_Size = 20;
 const GAMEGRID = Array.from({ length: Game_Size }, () => new Array(Game_Size).fill(""));
@@ -8,15 +9,21 @@ const generateFood = () => {
     const x = Math.floor(Math.random() * Game_Size);
     const y = Math.floor(Math.random() * Game_Size);
     return [x, y];
-}
+};
 
 export default function SnakeGame() {
     const [snakeBody, setSnakeBody] = useState(Initial_Snake);
     const [score, setScore] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
+    const [speed, setSpeed] = useState(500); 
+    const [isGameStarted,setIsGameStarted]=useState(false);
 
     const directionRef = useRef([1, 0]);
     const foodRef = useRef(generateFood());
+
+    
+    const foodSound = useRef(new Audio("/food1.mp3"));
+    const gameOverSound = useRef(new Audio("/gameover.mp3"));
 
     const isSnakeBodyDiv = (xc, yc) => {
         return snakeBody.some(([x, y]) => x === xc && y === yc);
@@ -26,11 +33,16 @@ export default function SnakeGame() {
         setSnakeBody(Initial_Snake);
         setScore(0);
         setIsPaused(false);
+        setSpeed(500); 
         directionRef.current = [1, 0];
         foodRef.current = generateFood();
+        setIsGameStarted(true);
     };
 
     useEffect(() => {
+
+        if (!isGameStarted) return;
+
         const intervalId = setInterval(() => {
             if (isPaused) return;
 
@@ -44,7 +56,8 @@ export default function SnakeGame() {
                     newHead[1] >= Game_Size ||
                     prevSnakeBody.some(([x, y]) => newHead[0] === x && newHead[1] === y)
                 ) {
-                    setIsPaused(true); // Pause the game
+                    setIsPaused(true); 
+                    gameOverSound.current.play().catch((error) => console.error("Error playing game over sound:", error)); 
                     return prevSnakeBody;
                 }
 
@@ -53,6 +66,8 @@ export default function SnakeGame() {
                 if (newHead[0] === foodRef.current[0] && newHead[1] === foodRef.current[1]) {
                     foodRef.current = generateFood();
                     setScore(score + 1);
+                    setSpeed((prevSpeed) => Math.max(50, prevSpeed * 0.9)); 
+                    foodSound.current.play().catch((error) => console.error("Error playing food sound:", error)); 
                 } else {
                     copySnakeBody.pop();
                 }
@@ -60,7 +75,7 @@ export default function SnakeGame() {
                 copySnakeBody.unshift(newHead);
                 return copySnakeBody;
             });
-        }, 500);
+        }, speed);
 
         const handleDirection = (e) => {
             const key = e.key;
@@ -81,19 +96,27 @@ export default function SnakeGame() {
             clearInterval(intervalId);
             window.removeEventListener("keydown", handleDirection);
         };
-    }, [score, isPaused]);
+    }, [score, isPaused, speed,isGameStarted]);
 
     return (
         <>
             <div className="heading"><h1>Let's play the Snake Game</h1></div>
             <div className="score"><h2>Score: {score}</h2></div>
-            {isPaused && (
+            {!isGameStarted &&(
+                <div className="start-game">
+                    <button onClick={()=>setIsGameStarted(true)}>Start</button>
+                </div>
+            )}
+            
+            
+            
+            {isPaused && isGameStarted &&(
                 <div className="game-over">
                     <h2>Game Over</h2>
                     <button onClick={restartGame}>Restart Game</button>
                 </div>
             )}
-            <div className="container">
+            <div className="container background">
                 {GAMEGRID.map((row, yc) => {
                     return row.map((cell, xc) => {
                         return (

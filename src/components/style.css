@@ -13,12 +13,13 @@
     left: 30%;
     top:10%;
 }
-.game-over{
+.start-game, .game-over{
     height: 20rem;
     position: absolute;
     left: 30%;
-    top: 72%;
+    top: 75%;
 }
+
 
 body{
     height: 100vh;
@@ -38,9 +39,16 @@ body{
 }
 
 .snake{
+
     background-color: blue;
+    border-radius: 50%;
 }
 .food{
     background-color: red;
-    border-radius: 50%;
+    border-radius: 30%;
+}
+.background {
+    background-image: url('./bgimage.jpg'); 
+    background-size: cover;
+    background-position: center;
 }
