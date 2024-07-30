@@ -40,15 +40,16 @@ body{
 
 .snake{
 
-    background-color: blue;
+    background-color: rgb(14, 15, 15);
     border-radius: 50%;
 }
 .food{
-    background-color: red;
+    background-color: rgba(237, 237, 80, 0.826);
     border-radius: 30%;
 }
 .background {
-    background-image: url('./bgimage.jpg'); 
+    background-image: url('./snakebg1.png'); 
     background-size: cover;
     background-position: center;
+    
 }
